@@ -175,15 +175,18 @@ var compileUtil = {
     },
     //解析v-model
     model: function (node, vm, exp) {
+        //实现数据绑定的初始化显示和创建对应的watcher
         this.bind(node, vm, exp, 'model');
         var me = this,
+            //得到表达式的值，
             val = this._getVMVal(vm, exp);
+        //给节点绑定input事件监听
         node.addEventListener('input', function (e) {
             var newValue = e.target.value;
             if (val === newValue) {
                 return;
             }
-
+            //将最新的值保存给表达式所对应的属性
             me._setVMVal(vm, exp, newValue);
             val = newValue;
         });
@@ -209,8 +212,10 @@ var compileUtil = {
                 与模板中表达式（不包含事件指令）一一对应
             Watcher的结构
          */
-        new Watcher(vm, exp, function (value, oldValue) {
-            updaterFn && updaterFn(node, value, oldValue);
+
+         //为表达式创建一个对应的watcher，实现节点的更新显示
+        new Watcher(vm, exp, function (value, oldValue) {//当表达式对应的一个属性值变化时调用
+            updaterFn && updaterFn(node, value, oldValue);//更新节点
         });
     },
 
